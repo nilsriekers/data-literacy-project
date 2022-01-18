@@ -1,4 +1,5 @@
 from urllib.error import HTTPError
+import pandas as pd
 
 def load_taxi_data(fleets=['yellow'], years=[2021], months=[1]):
     '''

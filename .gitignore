@@ -1,1 +1,4 @@
 data/yellow_tripdata_*
+/src/__pycache__
+/exp/.ipynb_checkpoints
+/dat/df_taxi_2019_01.csv
