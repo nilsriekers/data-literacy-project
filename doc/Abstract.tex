@@ -1,0 +1,58 @@
+\documentclass{article}
+
+% if you need to pass options to natbib, use, e.g.:
+%     \PassOptionsToPackage{numbers, compress}{natbib}
+% before loading neurips_2021
+
+% ready for submission
+\usepackage[preprint]{neurips_2021}
+
+% to compile a preprint version, e.g., for submission to arXiv, add add the
+% [preprint] option:
+%     \usepackage[preprint]{neurips_2021}
+
+% to compile a camera-ready version, add the [final] option, e.g.:
+%     \usepackage[final]{neurips_2021}
+
+% to avoid loading the natbib package, add option nonatbib:
+%    \usepackage[nonatbib]{neurips_2021}
+
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage[colorlinks=true]{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard maths symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+\usepackage{xcolor}         % colours
+
+\title{Analysing Taxi Data for\\ Traffic Planning and Tourism}
+
+% The \author macro works with any number of authors. There are two commands
+% used to separate the names and addresses of multiple authors: \And and \AND.
+%
+% Using \And between authors leaves it to LaTeX to determine where to break the
+% lines. Using \AND forces a line break at that point. So, if LaTeX puts 3 of 4
+% authors names on the first line, and the last on the second line, try using
+% \AND instead of \And before the third author name.
+
+\author{%
+  Wolfgang França Dantas\\
+  Matrikelnummer 5717688\\
+  \texttt{wolfgang-michael.franca-dantas@student.uni-tuebingen.de} \\
+  \And
+  Nils Riekers\\
+  Matrikelnummer 5742398\\
+  \texttt{nils.riekers@student.uni-tuebingen.de} \\
+}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+    We are planning to use a collection of \href{https://www1.nyc.gov/site/tlc/about/tlc-trip-record-data.page}{New York City taxi trip records} to identify and visualise popular locations. Furthermore, we want to predict how much longer rides take depending on the time of the day in comparison to the shortest possible journey duration. To answer this question, we want to use linear regression.
+\end{abstract}
+
+\end{document}
