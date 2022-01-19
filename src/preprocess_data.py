@@ -48,3 +48,5 @@ def preprocess_data(df_taxi_data):
     
     # Show preprocessing result
     print('About {:.2f}% of the entire data could not be used due to missing information (NaN).'.format(100*(1-df_taxi_data.shape[0]/n_rows_total)))
+    
+    return df_taxi_data
