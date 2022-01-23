@@ -19,8 +19,8 @@ def remove_routes(df_taxi_data):
     idx_outside = [264, 265]
     
     # Only keep rows that contain trips coming from or going to locations within the city.
-    df_taxi_data = df_taxi_data[(df_taxi_data['PULocationID'] != idx_outside[0]) & (df_taxi_data['PULocationID'] != idx_outside[0]) & \
-                                (df_taxi_data['DOLocationID'] != idx_outside[1]) & (df_taxi_data['DOLocationID'] != idx_outside[1])]
+    df_taxi_data = df_taxi_data[(df_taxi_data['PULocationID'] != idx_outside[0]) & (df_taxi_data['DOLocationID'] != idx_outside[0]) & \
+                                (df_taxi_data['PULocationID'] != idx_outside[1]) & (df_taxi_data['DOLocationID'] != idx_outside[1])]
     
     # Show preprocessing result
     print('About {:.4f}% of the entire data could not be used because "PULocationID" or "DOLocationID" are outside the city.'.format(100*(1-df_taxi_data.shape[0]/n_rows_total)))
