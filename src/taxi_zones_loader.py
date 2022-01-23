@@ -10,6 +10,7 @@ def taxi_zones_loader():
     try:
         df_zones_info = pd.read_csv(url, low_memory=False)
         # Drop unnecessary column and return resulting dataframe.
-        return df_zones_info.drop(columns='service_zone', inplace=True)
+        df_zones_info.drop(columns='service_zone', inplace=True)
+        return df_zones_info
     except HTTPError:
         print('ERROR: Could not access "{}"!'.format(url))
