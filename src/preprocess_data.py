@@ -47,6 +47,6 @@ def preprocess_data(df_taxi_data):
     # print('There are {} rows with NaN values left.'.format(df_taxi_data[df_taxi_data['PULocationID'].isnull()].shape[0]))
     
     # Show preprocessing result
-    print('About {:.2f}% of the entire data could not be used due to missing information (NaN).'.format(100*(1-df_taxi_data.shape[0]/n_rows_total)))
+    print('About {:.4f}% of the entire data could not be used due to missing information (NaN).'.format(100*(1-df_taxi_data.shape[0]/n_rows_total)))
     
     return df_taxi_data

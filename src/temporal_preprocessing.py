@@ -30,11 +30,14 @@ def temporal_preprocessing(df_taxi_data):
     # Trip duration in minutes
     df_taxi_data['trip_duration_minutes'] = df_taxi_data['trip_duration'] / pd.Timedelta(minutes=1)
     
-    # Extract day of week from timestamp => Monday=0, ..., Sunday=6 (i.e., 7 days in total)
-    df_taxi_data['pickup_weekday'] = df_taxi_data['pickup_datetime'].dt.dayofweek
+    # Extract month from timestamp
+    df_taxi_data['pickup_month'] = df_taxi_data['pickup_datetime'].dt.month
     
     # Extract day of month from timestamp
     df_taxi_data['pickup_day_of_month'] = df_taxi_data['pickup_datetime'].dt.day
+    
+    # Extract day of week from timestamp => Monday=0, ..., Sunday=6 (i.e., 7 days in total)
+    df_taxi_data['pickup_weekday'] = df_taxi_data['pickup_datetime'].dt.dayofweek
     
     # Extract hour from timestamp
     df_taxi_data['pickup_hour'] = df_taxi_data['pickup_datetime'].dt.hour
