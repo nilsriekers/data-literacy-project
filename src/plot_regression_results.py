@@ -1,3 +1,7 @@
+from sklearn.metrics import mean_squared_error, r2_score
+import numpy as np
+import matplotlib.pyplot as plt
+
 def plot_regression_results(y_test,y_pred,weights):
     '''Produces three plots to analyze the results of linear regression:
         -True vs predicted

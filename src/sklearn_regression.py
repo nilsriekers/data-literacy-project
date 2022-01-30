@@ -1,3 +1,5 @@
+from sklearn import linear_model
+
 def sklearn_regression(X_test, X_train, y_train):
     '''Computes OLS weights for linear regression without regularization using the sklearn library on the training set and 
        returns weights and testset predictions.

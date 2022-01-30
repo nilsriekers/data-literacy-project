@@ -1,3 +1,7 @@
+from sklearn.pipeline import Pipeline
+from sklearn import linear_model
+from sklearn import preprocessing
+
 def sklearn_regression_bf(X_test, X_train, y_train, deg=2):
     '''Computes linear regression with basis functions but without regularization using the sklearn library
        on the training set and returns weights and testset predictions.
