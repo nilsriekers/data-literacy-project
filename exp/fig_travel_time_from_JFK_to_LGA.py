@@ -206,7 +206,7 @@ def main():
         df_sunday_travel_time.plot(ax=ax, label="Sunday")
 
         # legend settings
-        ax.legend(["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"], prop={'size': 7.5},
+        ax.legend(["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"], prop={'size': 9.5},
                   loc='center left', bbox_to_anchor=(1, 0.5))
 
         # set title

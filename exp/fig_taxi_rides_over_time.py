@@ -131,7 +131,7 @@ def create_and_save_plots(rides_df, rides_ratio_df):
         # change y labels to percentage
         ax2.set_yticklabels(['{:,.2%}'.format(x) for x in vals])
         # set title
-        ax2.set_title('Market share of taxi providers in NYC per month')
+        ax2.set_title('Market share of taxi providers in NYC per day')
         # set x label
         ax2.set_xlabel('date')
         # set y label
@@ -158,47 +158,6 @@ def create_and_save_plots(rides_df, rides_ratio_df):
         plt.show()
         # save figure
         fig.savefig(FIG_PATH + 'taxi-rides-over-time.pdf', bbox_inches='tight', dpi=400)
-
-'''
-    # market share of taxi providers in NYC by month
-    with plt.rc_context(bundles.neurips2021()):
-        # initiate plot
-        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 2))  # , constrained_layout=True)
-        # do area plot
-        rides_ratio_df.plot.area(x='time_period', ax=ax1, colormap=cm)
-        # get yticks
-        vals = ax1.get_yticks()
-        # change y labels to percentage
-        ax1.set_yticklabels(['{:,.2%}'.format(x) for x in vals])
-        # set title
-        ax1.set_title('Market share of taxi providers in NYC per month')
-        # set x label
-        ax1.set_xlabel('date')
-        # set y label
-        ax1.set_ylabel('ratio of market share')
-
-        # do area plot
-        rides_df.plot(x='time_period', ax=ax2, colormap=cm)
-        # get yticks
-        ax2.get_yaxis().get_major_formatter().set_scientific(False)
-        # set title
-        ax2.set_title('Taxi rides by provider in NYC per day')
-        # set x label
-        ax2.set_xlabel('date')
-        # set y label
-        ax2.set_ylabel('amount of rides')
-
-        ax2.get_legend().remove()
-        ax1.legend(facecolor='white', framealpha=1, loc='upper right', prop={'size': 8})
-
-        plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.24, hspace=None)
-        fig.autofmt_xdate()
-        # fig.tight_layout()
-        # show plot
-        plt.show()
-        # save figure
-        fig.savefig(FIG_PATH + 'taxi-rides-over-time.pdf', bbox_inches='tight', dpi=400)
-'''
 
 
 def main():
