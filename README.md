@@ -12,7 +12,7 @@ pip install -r requirements.txt
 
 ## Usage
 
-Use the programming language [python](https://www.python.org/downloads/) to generate the figures. (Note: To generate taxi-rides-over-time.pdf, about 110 gigabytes of hard disk space have to be available. For the other plots, about 2 GB of space are required and the download might take up to 10 minutes.)
+Use the programming language [python](https://www.python.org/downloads/) to generate the figures. (Note: To generate taxi-rides-over-time.pdf, about 110 gigabytes of hard disk space have to be available. For maps-pickup-travel-time.pdf, correlations_gaussianized_columns_route_132_138.pdf and feature_distributions.pdf, about 2 GB of space are required and the download might take up to 10 minutes.)
 
 ```python3 exp/fig_<name>```
 
