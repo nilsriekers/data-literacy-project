@@ -17,4 +17,4 @@ Use the programming language [python](https://www.python.org/downloads/) to gene
 ```python3 exp/fig_<name>```
 
 ## Example figures
-<embed src="./doc/fig/taxi-rides-over-time.pdf2 type="application/pdf")>
+![plot](./doc/fig/taxi-rides-over-time.png)
