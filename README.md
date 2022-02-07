@@ -1,4 +1,4 @@
-# Analysing Taxi Data for Traffic Planning and Touris
+# Analysing Taxi Data for Traffic Planning and Tourism
 
 We used a collection of New York City taxi trip records to identify and visualisepopular locations as well as the development of market shares of different types oftaxi companies. Furthermore, we wanted to predict how much longer rides takedepending on the time of the day in comparison to the shortest possible journeyduration. To answer this question, we wanted to use linear regression. However,during our analyses, we found many inconsistencies in the data and the absence ofcorrelation between the destined temporal predictors and the trip duration.
 
@@ -17,4 +17,4 @@ Use the programming language [python](https://www.python.org/downloads/) to gene
 ```python3 exp/fig_<name>```
 
 ## Example figures
-![plot](./doc/fig/taxi-rides-over-time.pdf)
+<embed src="./doc/fig/taxi-rides-over-time.pdf2 type="application/pdf")>
