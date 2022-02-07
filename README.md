@@ -18,7 +18,11 @@ Use the programming language [python](https://www.python.org/downloads/) to gene
 
 ## Example figures
 ![plot](./doc/fig/taxi-rides-over-time.png)
+
 ![plot](./doc/fig/maps-pickup-travel-time.png)
+
 ![plot](./doc/fig/travel-time-from-JFK-to-LGA.png)
+
 ![plot](./doc/fig/correlations_gaussianized_columns_route_132_138.png)
+
 ![plot](./doc/fig/feature_distributions.png)
