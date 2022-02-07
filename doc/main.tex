@@ -6,6 +6,7 @@
 
 % ready for submission
 \usepackage[preprint]{neurips_2021}
+\usepackage{pdfpages}
 
 % to compile a preprint version, e.g., for submission to arXiv, add add the
 % [preprint] option:
@@ -22,12 +23,15 @@
 \usepackage{hyperref}       % hyperlinks
 \usepackage{url}            % simple URL typesetting
 \usepackage{booktabs}       % professional-quality tables
-\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{amsfonts, bm}       % blackboard math symbols
 \usepackage{nicefrac}       % compact symbols for 1/2, etc.
 \usepackage{microtype}      % microtypography
 \usepackage{xcolor}         % colors
+\usepackage{biblatex}       % imports biblatex package
 
-\title{Formatting Instructions For NeurIPS 2021}
+\addbibresource{refs.bib}   % import the bibliography file
+
+\title{Analysing Taxi Data for Traffic Planning and Tourism}
 
 % The \author macro works with any number of authors. There are two commands
 % used to separate the names and addresses of multiple authors: \And and \AND.
@@ -38,454 +42,133 @@
 % \AND instead of \And before the third author name.
 
 \author{%
-  David S.~Hippocampus\thanks{Use footnote for providing further information
-    about author (webpage, alternative address)---\emph{not} for acknowledging
-    funding agencies.} \\
-  Department of Computer Science\\
-  Cranberry-Lemon University\\
-  Pittsburgh, PA 15213 \\
-  \texttt{hippo@cs.cranberry-lemon.edu} \\
-  % examples of more authors
-  % \And
-  % Coauthor \\
-  % Affiliation \\
-  % Address \\
-  % \texttt{email} \\
-  % \AND
-  % Coauthor \\
-  % Affiliation \\
-  % Address \\
-  % \texttt{email} \\
-  % \And
-  % Coauthor \\
-  % Affiliation \\
-  % Address \\
-  % \texttt{email} \\
-  % \And
-  % Coauthor \\
-  % Affiliation \\
-  % Address \\
-  % \texttt{email} \\
+  Wolfgang França Dantas\\
+  Matrikelnummer 5717688\\
+  \texttt{wolfgang-michael.franca-dantas@} \\
+  \texttt{student.uni-tuebingen.de} \\
+  \And
+  Nils Riekers\\
+  Matrikelnummer 5742398\\
+  \texttt{nils.riekers@student.uni-tuebingen.de} \\
 }
-
 \begin{document}
 
 \maketitle
 
+\begin{center}
+\vspace{-1cm}
+\url{https://github.com/nilsriekers/data-literacy-project}
+\end{center}
+
 \begin{abstract}
-  The abstract paragraph should be indented \nicefrac{1}{2}~inch (3~picas) on
-  both the left- and right-hand margins. Use 10~point type, with a vertical
-  spacing (leading) of 11~points.  The word \textbf{Abstract} must be centered,
-  bold, and in point size 12. Two line spaces precede the abstract. The abstract
-  must be limited to one paragraph.
+We used a collection of New York City taxi trip records \cite{tlc} to identify and visualise popular locations as well as the development of market shares of different types of taxi companies. Furthermore, we wanted to predict how much longer rides take depending on the time of the day in comparison to the shortest possible journey duration. To answer this question, we wanted to use linear regression. However, during our analyses, we found many inconsistencies in the data and the absence of correlations between the destined temporal predictors and the trip duration.
 \end{abstract}
 
-\section{Submission of papers to NeurIPS 2021}
+\section{Introduction}
+As part of the ``Data Literacy'' module, we should gain experience in handling raw data. To do so, we used datasets of taxicab ride records spanning several years from the NYC Taxi and Limousine Commission (TLC). The data itself comes from the ride providers licensed under the Taxicab \& Livery Passenger Enhancement Program. The listed taxi providers are ``Yellow Taxi'', ``Green Taxi'' and ``For-Hire Vehicles'', the latter ones are largely new transportation providers such as Uber or Lyft. The dataset contains information about the individual trips, such as ride time and locations. Our plan was to identify and visualise popular locations. We also wanted to predict how much longer the trips take depending on the time of day compared to the shortest possible trip duration.
 
-Please read the instructions below carefully and follow them faithfully.
+\section{Methods}
+We established a common standardised workflow in the visualisation and the statistical analysis part to acquire and process our data which consists of the following steps. For each step, we developed separate Python scripts: At first, we procedurally retrieve the taxi data from the official TLC website (\verb|load_taxi_data.py|). After the unification of the data by the loader function, the data directory had a size of about 108 gigabytes. While working with the data, we discovered many inconsistencies which made some pre-processing necessary to remove rows with invalid data like NaN (\verb|preprocess_data.py|), rows with the wrong year (\verb|keep_correct_year.py|), rows with wrong month (\verb|keep_correct_month.py|) and routes that come from or go to locations outside the city (\verb|remove_routes.py|). Afterwards, we extracted temporal features like the month, day, hour and minute of every ride’s pick-up and drop-off as well as the trip duration in minutes (\verb|temporal_preprocessing.py|). As we focused on one particular route, we filtered the trip duration in minutes by introducing a lower (8 minutes) and an upper limit (60 minutes) based on comparisons with average data from Google maps for the chosen route.
+For our statistical analyses and the travel time and pick-up visualisations, we limited the data to January 2019.
 
-\subsection{Style}
+Additional processing for the statistical analyses: After filtering, we dropped all columns that we would not use any further and only kept \emph{trip\_duration\_minutes}, \emph{pickup\_day\_of\_month}, \emph{pickup\_weekday}, \emph{pickup\_hour}, \emph{pickup\_minute} as final features.
 
-Papers to be submitted to NeurIPS 2021 must be prepared according to the
-instructions presented here. Papers may only be up to {\bf nine} pages long,
-including figures. Additional pages \emph{containing only acknowledgments and
-references} are allowed. Papers that exceed the page limit will not be
-reviewed, or in any other way considered for presentation at the conference.
+\subsection{Visualisation}
+To identify and visualise popular locations, we needed a map of NYC. Fortunately, the TLC provides a shapefile that divides NYC into different cab zones. A shapefile is a simple format for vector geospatial data. All datasets as of 2017 contain data with an indication of the particular pickup and dropout zone of a trip. We used this to visualise data across zones using GeoPandas which is a Python library for extending Pandas objects to support geographic data. For this, we implemented various functions to aggregate the corresponding data across zones.
 
-The margins in 2021 are the same as those in 2007, which allow for $\sim$$15\%$
-more words in the paper compared to earlier years.
+\subsection{Statistical Analysis}
+To investigate correlations between features X and Y, we created correlation matrices using Pearson correlation \(r_{XY}\) as defined in (\ref{pearsonr}). We later ran tests for the significance of the obtained \(r_{XY}\) values using a two-sided test based on the exact distribution of the test statistic which is implemented in SciPy \cite{scipy} (\href{https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.pearsonr.html}{\texttt{pearsonr}}).
+Some data transformations were necessary which we accomplished using simple Box-Cox power transformation (\href{https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.boxcox.html}{\texttt{boxcox}}, \cite{scipy}) which is defined as (\ref{boxcox})
+or Yeo-Johnson power transformation (\href{https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.yeojohnson.html}{\texttt{yeojohnson}}, \cite{scipy}) which is defined as (\ref{yeojohnson}) in the appendix.
 
-Authors are required to use the NeurIPS \LaTeX{} style files obtainable at the
-NeurIPS website as indicated below. Please make sure you use the current files
-and not previous versions. Tweaking the style files may be grounds for
-rejection.
+Because of better results in pre-evaluations, we decided for a linear regression model with 3\textsuperscript{rd} degree polynomial basis functions: \(y(\bm{\beta}, \textbf{x}) = \bm\beta^\top\phi(x) \) where \(\phi(x)\) are the basis functions up to degree 3 which include all interactions.
 
-\subsection{Retrieval of style files}
+\section{Results \& Discussion}
+We restricted the data to focus on one single route from JFK Airport (location ID 132) to LaGuardia Airport (location ID 138) which both are located in Queens (Figure \ref{fig:maps-pickup-travel-time}, left). We made this choice to have a busy route with enough space between the two locations. This was important to make sensible assumptions for filtering the data according to trip duration.
 
-The style files for NeurIPS and other conference information are available on
-the World Wide Web at
-\begin{center}
-  \url{http://www.neurips.cc/}
-\end{center}
-The file \verb+neurips_2021.pdf+ contains these instructions and illustrates the
-various formatting requirements your NeurIPS paper must satisfy.
+\subsection{Visualisation}
+\begin{figure}
+  \setlength\abovecaptionskip{-0.3\baselineskip}
+  \centering
+  \includegraphics[scale=0.63]{fig/taxi-rides-over-time.pdf}
+  \caption{Taxi rides by provider and provider market share in NYC per day.}
+  \label{fig:taxi-rides-over-time}
+\end{figure}
+\setlength{\textfloatsep}{10pt}
+Figure \ref{fig:taxi-rides-over-time} shows on its left half the number of daily taxi trips in NYC in the period from January 2015 to the end of June 2021 visualised by a line plot. On its right side, Figure 1 shows the ratio of market share among the taxi providers in the same period visualised by an area plot. It can be seen very clearly that the provider Yellow-Taxi performed continuously fewer trips over time. Meanwhile, the providers of the For-Hire Vehicles have steadily operated an increasing number of trips since the beginning of 2015. The providers of the For-Hire Vehicles took the market leadership of the taxi market in NYC in the first half of 2017, replacing Yellow-Taxi. The rides and as well as the market share of the provider Green Taxi was permanently at a low, but relatively constant level. In the beginning of 2020, we see a very sharp drop in the amount of daily rides. This was caused by the lockdown due to the Corona virus. By the end of June 2021, the transport volume of all taxi providers had not recovered. With the beginning of the first lockdown, the market leadership of the For-Hire Vehicles providers has further increased. The increasing digitalization is probably the reason why the new providers of the for-hire vehicles, such as Uber or Lyft, are replacing the traditional enterprises.
+\begin{figure}
+  \setlength\abovecaptionskip{-0.3\baselineskip}
+  \centering
+  \includegraphics[scale=0.47]{fig/maps-pickup-travel-time.pdf}
+  \caption{Pickups per Zone and average travel time from JFK to other Zones in 01/2019.}
+  \label{fig:maps-pickup-travel-time}
+\end{figure}
+\setlength{\textfloatsep}{10pt}
 
-The only supported style file for NeurIPS 2021 is \verb+neurips_2021.sty+,
-rewritten for \LaTeXe{}.  \textbf{Previous style files for \LaTeX{} 2.09,
-  Microsoft Word, and RTF are no longer supported!}
+Figure \ref{fig:maps-pickup-travel-time} shows on its left half the number of cab pickups in NYC per zone in January 2019 visualized by a heat map. In brighter zones, fewer pickups took place, while in red zones there were more. The zone with the ID 132, the John F. Kennedy Airport (JFK), as well as the zone with the ID 138, the LaGuardia Airport (LGA), were manually supplemented with a number to mark them. It can be seen that especially the downtown area in Manhattan, as well as the two airports JFK and LGA were highly frequented places for pickups of taxi rides. This is probably due to the fact that in Manhattan, compared to the other parts of the city, an above-average number of people work, live and also visit for tourist purposes. The high number of pickups at the airports is probably due to a high volume of travellers. On its right side, Figure \ref{fig:maps-pickup-travel-time} shows the average travel time in minutes from the JFK airport with ID 132 to the other zones.
+\begin{figure}
+  \vspace{-0.5cm}
+  \setlength\abovecaptionskip{-0.3\baselineskip}
+  \centering
+  \includegraphics[scale=0.70]{fig/travel-time-from-JFK-to-LGA.pdf}
+  \caption{Average travel time between JFK and LaGuardia Airport by day of week in 2019.}
+  \label{fig:travel-time-from-JFK-to-LGA}
+\end{figure}
+\setlength{\textfloatsep}{10pt}
 
-The \LaTeX{} style file contains three optional arguments: \verb+final+, which
-creates a camera-ready copy, \verb+preprint+, which creates a preprint for
-submission to, e.g., arXiv, and \verb+nonatbib+, which will not load the
-\verb+natbib+ package for you in case of package clash.
+It gets more interesting looking at Figure \ref{fig:travel-time-from-JFK-to-LGA}, it shows the average travel time between JFK and LaGuardia Airport by day of the week throughout 2019 in a line graph. It is clear to see that there are different rush hours, where the travel time is much longer than at other times. Thus, there is a peak between 7 and 9 am and a peak between 2 and 7 pm. However, on the weekend days of Saturday and Sunday, this peak is absent in the morning and less intense in the afternoon. This suggests that these times are most likely due to commuting.
 
-\paragraph{Preprint option}
-If you wish to post a preprint of your work online, e.g., on arXiv, using the
-NeurIPS style, please use the \verb+preprint+ option. This will create a
-nonanonymized version of your work with the text ``Preprint. Work in progress.''
-in the footer. This version may be distributed as you see fit. Please \textbf{do
-  not} use the \verb+final+ option, which should \textbf{only} be used for
-papers accepted to NeurIPS.
-
-At submission time, please omit the \verb+final+ and \verb+preprint+
-options. This will anonymize your submission and add line numbers to aid
-review. Please do \emph{not} refer to these line numbers in your paper as they
-will be removed during generation of camera-ready copies.
-
-The file \verb+neurips_2021.tex+ may be used as a ``shell'' for writing your
-paper. All you have to do is replace the author, title, abstract, and text of
-the paper with your own.
-
-The formatting instructions contained in these style files are summarized in
-Sections \ref{gen_inst}, \ref{headings}, and \ref{others} below.
-
-\section{General formatting instructions}
-\label{gen_inst}
-
-The text must be confined within a rectangle 5.5~inches (33~picas) wide and
-9~inches (54~picas) long. The left margin is 1.5~inch (9~picas).  Use 10~point
-type with a vertical spacing (leading) of 11~points.  Times New Roman is the
-preferred typeface throughout, and will be selected for you by default.
-Paragraphs are separated by \nicefrac{1}{2}~line space (5.5 points), with no
-indentation.
-
-The paper title should be 17~point, initial caps/lower case, bold, centered
-between two horizontal rules. The top rule should be 4~points thick and the
-bottom rule should be 1~point thick. Allow \nicefrac{1}{4}~inch space above and
-below the title to rules. All pages should start at 1~inch (6~picas) from the
-top of the page.
-
-For the final version, authors' names are set in boldface, and each name is
-centered above the corresponding address. The lead author's name is to be listed
-first (left-most), and the co-authors' names (if different address) are set to
-follow. If there is only one co-author, list both author and co-author side by
-side.
-
-Please pay special attention to the instructions in Section \ref{others}
-regarding figures, tables, acknowledgments, and references.
-
-\section{Headings: first level}
-\label{headings}
-
-All headings should be lower case (except for first word and proper nouns),
-flush left, and bold.
-
-First-level headings should be in 12-point type.
-
-\subsection{Headings: second level}
-
-Second-level headings should be in 10-point type.
-
-\subsubsection{Headings: third level}
-
-Third-level headings should be in 10-point type.
-
-\paragraph{Paragraphs}
-
-There is also a \verb+\paragraph+ command available, which sets the heading in
-bold, flush left, and inline with the text, with the heading followed by 1\,em
-of space.
-
-\section{Citations, figures, tables, references}
-\label{others}
-
-These instructions apply to everyone.
-
-\subsection{Citations within the text}
-
-The \verb+natbib+ package will be loaded for you by default.  Citations may be
-author/year or numeric, as long as you maintain internal consistency.  As to the
-format of the references themselves, any style is acceptable as long as it is
-used consistently.
-
-The documentation for \verb+natbib+ may be found at
-\begin{center}
-  \url{http://mirrors.ctan.org/macros/latex/contrib/natbib/natnotes.pdf}
-\end{center}
-Of note is the command \verb+\citet+, which produces citations appropriate for
-use in inline text.  For example,
-\begin{verbatim}
-   \citet{hasselmo} investigated\dots
-\end{verbatim}
-produces
-\begin{quote}
-  Hasselmo, et al.\ (1995) investigated\dots
-\end{quote}
-
-If you wish to load the \verb+natbib+ package with options, you may add the
-following before loading the \verb+neurips_2021+ package:
-\begin{verbatim}
-   \PassOptionsToPackage{options}{natbib}
-\end{verbatim}
-
-If \verb+natbib+ clashes with another package you load, you can add the optional
-argument \verb+nonatbib+ when loading the style file:
-\begin{verbatim}
-   \usepackage[nonatbib]{neurips_2021}
-\end{verbatim}
-
-As submission is double blind, refer to your own published work in the third
-person. That is, use ``In the previous work of Jones et al.\ [4],'' not ``In our
-previous work [4].'' If you cite your other papers that are not widely available
-(e.g., a journal paper under review), use anonymous author names in the
-citation, e.g., an author of the form ``A.\ Anonymous.''
-
-\subsection{Footnotes}
-
-Footnotes should be used sparingly.  If you do require a footnote, indicate
-footnotes with a number\footnote{Sample of the first footnote.} in the
-text. Place the footnotes at the bottom of the page on which they appear.
-Precede the footnote with a horizontal rule of 2~inches (12~picas).
-
-Note that footnotes are properly typeset \emph{after} punctuation
-marks.\footnote{As in this example.}
-
-\subsection{Figures}
+\subsection{Statistical Analysis}
 
 \begin{figure}
+  \setlength\abovecaptionskip{-0.3\baselineskip}
   \centering
-  \fbox{\rule[-.5cm]{0cm}{4cm} \rule[-.5cm]{4cm}{0cm}}
-  \caption{Sample figure caption.}
+  \includegraphics[scale=0.38]{fig/feature_distributions.pdf}
+  \caption{Distribution of features before and after partial gaussianization. Route from location ID 132 to ID 138 in 01/2019. * indicates that gaussianization was not possible with simple transformations.}
+  \label{fig:feature_distributions}
+\end{figure}
+\begin{figure}
+  \setlength\abovecaptionskip{-0.3\baselineskip}
+  \centering
+  \includegraphics[scale=0.45]{fig/correlations_gaussianized_columns_route_132_138.pdf}
+  \caption{Correlations of filtered and partially gaussianized features. Route from location ID 132 to ID 138 in 01/2019.}
+  \label{fig:correlation_matrix}
 \end{figure}
 
-All artwork must be neat, clean, and legible. Lines should be dark enough for
-purposes of reproduction. The figure number and caption always appear after the
-figure. Place one line space before the figure caption and one line space after
-the figure. The figure caption should be lower case (except for first word and
-proper nouns); figures are numbered consecutively.
+After filtering the data, we wanted to analyse Pearson correlations between features to select the best predictors for our regression model. However, we found that the data was not Gaussian at all (Figure \ref{fig:feature_distributions} top). This is problematic as Gaussian data is a prerequisite to the Pearson correlation. Therefore, we tried to ``gaussianize'' the data using non-linear yet simple Box-Cox and Yeo-Johnson transformations which were only partially successful (Figure \ref{fig:feature_distributions} bottom). We are aware that this criterion, thus, is violated and the correlation coefficients shown in Figure \ref{fig:correlation_matrix} may only have limited validity.
 
-You may use color figures.  However, it is best for the figure captions and the
-paper body to be legible if the paper is printed in either black/white or in
-color.
+Based on these results, we tested the significance of the correlations between \emph{trip\_duration\_minutes} \(\times\) \emph{pickup\_weekday} (\(r = -0.19\), \(p<0.0001\)), \emph{trip\_duration\_minutes} \(\times\) \emph{pickup\_day\_of\_month} (\(r = 0.06\), \(p<0.0001\)), \emph{trip\_duration\_minutes} \(\times\) \emph{pickup\_hour} (\(r = 0.04\), \(p= 0.0011\)) and \emph{trip\_duration\_minutes} \(\times\) \emph{pickup\_minute} (\(r = -0.01\), \(p=0.6853\)).
+Finally, we divided our entire filtered data (5912 rows) into training and test set (\(10\%\) of the entire data set) and fitted a linear regression model with 3\textsuperscript{rd} order polynomial basis functions to the data whose coefficient of determination evaluated to \(\textrm{R}^2=0.2\).
 
-\subsection{Tables}
+In cases where \(r_{XY} \approx 0\), this indicates that there is no correlation between the trip duration in minutes and the respective feature. From the highly significant p-values from the two-sided test for correlation we conclude that there actually is no correlation. The \(r_{XY}\) value obtained is too unlikely to having occurred by chance. Despite a non-significant p-value of the \emph{trip\_duration\_minutes} \(\times\) \emph{pickup\_minute} correlation, we still assume no correlation due to the violated criterion of Gaussianity. Assuming no correlations, all variables are stochastically linearly independent. This explains why the linear regression could not work with the target-feature combinations we initially chose and also is reflected by the small R\textsuperscript{2} value. From Figure \ref{fig:travel-time-from-JFK-to-LGA}  we rather would conclude highly non-linear relationships. Thus, the basis functions we used were too simple to capture them.
 
-All tables must be centered, neat, clean and legible.  The table number and
-title always appear before the table.  See Table~\ref{sample-table}.
+\section{Overall conclusion}
+In conclusion, we found that lots of care has to be taken when using this data set. Inconsistent and implausible data can, when not discovered, distort the results of possible analyses. Many decisions have to be taken by the user of the data how to filter it and how to extract the sensible bits as little documentation is provided by the TLC \cite{tlc} about how the data is generated. Furthermore, linear regression based on temporal features is not possible due to their non-linear nature.
 
-Place one line space before the table title, one line space after the
-table title, and one line space after the table. The table title must
-be lower case (except for first word and proper nouns); tables are
-numbered consecutively.
-
-Note that publication-quality tables \emph{do not contain vertical rules.} We
-strongly suggest the use of the \verb+booktabs+ package, which allows for
-typesetting high-quality, professional tables:
-\begin{center}
-  \url{https://www.ctan.org/pkg/booktabs}
-\end{center}
-This package was used to typeset Table~\ref{sample-table}.
-
-\begin{table}
-  \caption{Sample table title}
-  \label{sample-table}
-  \centering
-  \begin{tabular}{lll}
-    \toprule
-    \multicolumn{2}{c}{Part}                   \\
-    \cmidrule(r){1-2}
-    Name     & Description     & Size ($\mu$m) \\
-    \midrule
-    Dendrite & Input terminal  & $\sim$100     \\
-    Axon     & Output terminal & $\sim$10      \\
-    Soma     & Cell body       & up to $10^6$  \\
-    \bottomrule
-  \end{tabular}
-\end{table}
-
-\section{Final instructions}
-
-Do not change any aspects of the formatting parameters in the style files.  In
-particular, do not modify the width or length of the rectangle the text should
-fit into, and do not change font sizes (except perhaps in the
-\textbf{References} section; see below). Please note that pages should be
-numbered.
-
-\section{Preparing PDF files}
-
-Please prepare submission files with paper size ``US Letter,'' and not, for
-example, ``A4.''
-
-Fonts were the main cause of problems in the past years. Your PDF file must only
-contain Type 1 or Embedded TrueType fonts. Here are a few instructions to
-achieve this.
-
-\begin{itemize}
-
-\item You should directly generate PDF files using \verb+pdflatex+.
-
-\item You can check which fonts a PDF files uses.  In Acrobat Reader, select the
-  menu Files$>$Document Properties$>$Fonts and select Show All Fonts. You can
-  also use the program \verb+pdffonts+ which comes with \verb+xpdf+ and is
-  available out-of-the-box on most Linux machines.
-
-\item The IEEE has recommendations for generating PDF files whose fonts are also
-  acceptable for NeurIPS. Please see
-  \url{http://www.emfield.org/icuwb2010/downloads/IEEE-PDF-SpecV32.pdf}
-
-\item \verb+xfig+ "patterned" shapes are implemented with bitmap fonts.  Use
-  "solid" shapes instead.
-
-\item The \verb+\bbold+ package almost always uses bitmap fonts.  You should use
-  the equivalent AMS Fonts:
-\begin{verbatim}
-   \usepackage{amsfonts}
-\end{verbatim}
-followed by, e.g., \verb+\mathbb{R}+, \verb+\mathbb{N}+, or \verb+\mathbb{C}+
-for $\mathbb{R}$, $\mathbb{N}$ or $\mathbb{C}$.  You can also use the following
-workaround for reals, natural and complex:
-\begin{verbatim}
-   \newcommand{\RR}{I\!\!R} %real numbers
-   \newcommand{\Nat}{I\!\!N} %natural numbers
-   \newcommand{\CC}{I\!\!\!\!C} %complex numbers
-\end{verbatim}
-Note that \verb+amsfonts+ is automatically loaded by the \verb+amssymb+ package.
-
-\end{itemize}
-
-If your file contains type 3 fonts or non embedded TrueType fonts, we will ask
-you to fix it.
-
-\subsection{Margins in \LaTeX{}}
-
-Most of the margin problems come from figures positioned by hand using
-\verb+\special+ or other commands. We suggest using the command
-\verb+\includegraphics+ from the \verb+graphicx+ package. Always specify the
-figure width as a multiple of the line width as in the example below:
-\begin{verbatim}
-   \usepackage[pdftex]{graphicx} ...
-   \includegraphics[width=0.8\linewidth]{myfile.pdf}
-\end{verbatim}
-See Section 4.4 in the graphics bundle documentation
-(\url{http://mirrors.ctan.org/macros/latex/required/graphics/grfguide.pdf})
-
-A number of width problems arise when \LaTeX{} cannot properly hyphenate a
-line. Please give LaTeX hyphenation hints using the \verb+\-+ command when
-necessary.
-
-\begin{ack}
-Use unnumbered first level headings for the acknowledgments. All acknowledgments
-go at the end of the paper before the list of references. Moreover, you are required to declare
-funding (financial activities supporting the submitted work) and competing interests (related financial activities outside the submitted work).
-More information about this disclosure can be found at: \url{https://neurips.cc/Conferences/2021/PaperInformation/FundingDisclosure}.
-
-Do {\bf not} include this section in the anonymized submission, only in the final paper. You can use the \texttt{ack} environment provided in the style file to autmoatically hide this section in the anonymized submission.
-\end{ack}
-
-\section*{References}
-
-References follow the acknowledgments. Use unnumbered first-level heading for
-the references. Any choice of citation style is acceptable as long as you are
-consistent. It is permissible to reduce the font size to \verb+small+ (9 point)
-when listing the references.
-Note that the Reference section does not count towards the page limit.
-\medskip
-
-{
-\small
-
-[1] Alexander, J.A.\ \& Mozer, M.C.\ (1995) Template-based algorithms for
-connectionist rule extraction. In G.\ Tesauro, D.S.\ Touretzky and T.K.\ Leen
-(eds.), {\it Advances in Neural Information Processing Systems 7},
-pp.\ 609--616. Cambridge, MA: MIT Press.
-
-[2] Bower, J.M.\ \& Beeman, D.\ (1995) {\it The Book of GENESIS: Exploring
-  Realistic Neural Models with the GEneral NEural SImulation System.}  New York:
-TELOS/Springer--Verlag.
-
-[3] Hasselmo, M.E., Schnell, E.\ \& Barkai, E.\ (1995) Dynamics of learning and
-recall at excitatory recurrent synapses and cholinergic modulation in rat
-hippocampal region CA3. {\it Journal of Neuroscience} {\bf 15}(7):5249-5262.
-}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{Checklist}
-
-%%% BEGIN INSTRUCTIONS %%%
-The checklist follows the references.  Please
-read the checklist guidelines carefully for information on how to answer these
-questions.  For each question, change the default \answerTODO{} to \answerYes{},
-\answerNo{}, or \answerNA{}.  You are strongly encouraged to include a {\bf
-justification to your answer}, either by referencing the appropriate section of
-your paper or providing a brief inline description.  For example:
-\begin{itemize}
-  \item Did you include the license to the code and datasets? \answerYes{See Section~\ref{gen_inst}.}
-  \item Did you include the license to the code and datasets? \answerNo{The code and the data are proprietary.}
-  \item Did you include the license to the code and datasets? \answerNA{}
-\end{itemize}
-Please do not modify the questions and only use the provided macros for your
-answers.  Note that the Checklist section does not count towards the page
-limit.  In your paper, please delete this instructions block and only keep the
-Checklist section heading above along with the questions/answers below.
-%%% END INSTRUCTIONS %%%
-
-\begin{enumerate}
-
-\item For all authors...
-\begin{enumerate}
-  \item Do the main claims made in the abstract and introduction accurately reflect the paper's contributions and scope?
-    \answerTODO{}
-  \item Did you describe the limitations of your work?
-    \answerTODO{}
-  \item Did you discuss any potential negative societal impacts of your work?
-    \answerTODO{}
-  \item Have you read the ethics review guidelines and ensured that your paper conforms to them?
-    \answerTODO{}
-\end{enumerate}
-
-\item If you are including theoretical results...
-\begin{enumerate}
-  \item Did you state the full set of assumptions of all theoretical results?
-    \answerTODO{}
-	\item Did you include complete proofs of all theoretical results?
-    \answerTODO{}
-\end{enumerate}
-
-\item If you ran experiments...
-\begin{enumerate}
-  \item Did you include the code, data, and instructions needed to reproduce the main experimental results (either in the supplemental material or as a URL)?
-    \answerTODO{}
-  \item Did you specify all the training details (e.g., data splits, hyperparameters, how they were chosen)?
-    \answerTODO{}
-	\item Did you report error bars (e.g., with respect to the random seed after running experiments multiple times)?
-    \answerTODO{}
-	\item Did you include the total amount of compute and the type of resources used (e.g., type of GPUs, internal cluster, or cloud provider)?
-    \answerTODO{}
-\end{enumerate}
-
-\item If you are using existing assets (e.g., code, data, models) or curating/releasing new assets...
-\begin{enumerate}
-  \item If your work uses existing assets, did you cite the creators?
-    \answerTODO{}
-  \item Did you mention the license of the assets?
-    \answerTODO{}
-  \item Did you include any new assets either in the supplemental material or as a URL?
-    \answerTODO{}
-  \item Did you discuss whether and how consent was obtained from people whose data you're using/curating?
-    \answerTODO{}
-  \item Did you discuss whether the data you are using/curating contains personally identifiable information or offensive content?
-    \answerTODO{}
-\end{enumerate}
-
-\item If you used crowdsourcing or conducted research with human subjects...
-\begin{enumerate}
-  \item Did you include the full text of instructions given to participants and screenshots, if applicable?
-    \answerTODO{}
-  \item Did you describe any potential participant risks, with links to Institutional Review Board (IRB) approvals, if applicable?
-    \answerTODO{}
-  \item Did you include the estimated hourly wage paid to participants and the total amount spent on participant compensation?
-    \answerTODO{}
-\end{enumerate}
-
-\end{enumerate}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\printbibliography % Prints bibliography
 
 \appendix
-
 \section{Appendix}
+Formulas mentioned in the methods section:
 
-Optionally include extra information (complete proofs, additional experiments and plots) in the appendix.
-This section will often be part of the supplemental material.
+\begin{equation}\label{pearsonr}
+    r_{YX} = \frac{\sum (x-\bar{x})(y-\bar{y})}{\sqrt{\sum (x-\bar{x})^2 \sum (y-\bar{y})^2}}
+\end{equation}
+
+\vspace{5mm} %5mm vertical space
+
+\begin{equation}\label{boxcox}
+         \widetilde{x}_{BC}(x)=\left\{\begin{array}{ll} \frac{x^\lambda - 1}{\lambda}, & \lambda \neq 0 \\ \\
+         log(x), & \lambda = 0\end{array}\right.
+\end{equation}
+
+\vspace{5mm} %5mm vertical space
+
+\begin{equation}\label{yeojohnson}
+         \widetilde{x}_{YJ}(x)=\left\{\begin{array}{ll} \frac{(x+1)^\lambda -1}{\lambda}, & x \geq 0 \; \textrm{and} \;  \lambda \neq 0 \\ \\
+         log(x+1), & x \geq 0 \; \textrm{and} \; \lambda = 0 \\ \\
+         -\frac{(-x+1)^{2-\lambda}-1}{2-\lambda}, & x < 0 \; \textrm{and} \; \lambda \neq 2 \\ \\
+         -log(-x+1), & x < 0 \; \textrm{and} \; \lambda = 2\end{array} \right.
+\end{equation}
 
 \end{document}
